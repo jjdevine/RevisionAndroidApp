@@ -24,14 +24,38 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/revisionButton"
+        android:id="@+id/buttonSingleFlashcard"
         android:layout_width="356dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Revision"
+        android:layout_marginEnd="8dp"
+        android:text="Single Flashcards"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menuTextView" />
+
+    <Button
+        android:id="@+id/buttonQAFlashcard"
+        android:layout_width="356dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Q&amp;A Flashcards"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSingleFlashcard" />
+
+    <Button
+        android:id="@+id/buttonDbxLogin"
+        android:layout_width="356dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Dropbox Login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonQAFlashcard" />
 </android.support.constraint.ConstraintLayout>

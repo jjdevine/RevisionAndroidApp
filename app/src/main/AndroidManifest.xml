@@ -12,7 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="com.jonathandevinesoftware.revisionapp.common.App">
         <activity
             android:name=".MenuActivity"
             android:label="@string/app_name"
@@ -41,7 +42,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".qaflashcard.QAFlashcard"></activity>
+        <activity android:name=".qaflashcard.QAFlashcardActivity"></activity>
     </application>
 
 </manifest>

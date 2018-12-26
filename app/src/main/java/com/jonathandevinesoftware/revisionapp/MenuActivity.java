@@ -5,15 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.android.Auth;
-import com.dropbox.core.v2.DbxClientV2;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.dropbox.DropboxService;
-import com.jonathandevinesoftware.revisionapp.qaflashcard.QAFlashcardActivity;
+import com.jonathandevinesoftware.revisionapp.qaflashcardselect.QAFlashcardSelectActivity;
 
-import java.util.Locale;
 import java.util.Optional;
 
 public class MenuActivity extends BaseActivity {
@@ -37,7 +33,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void onQAFlashCardClick(View view) {
-        Intent intent = new Intent(this, QAFlashcardActivity.class);
+        Intent intent = new Intent(this, QAFlashcardSelectActivity.class);
         startActivity(intent);
     }
 
@@ -51,31 +47,6 @@ public class MenuActivity extends BaseActivity {
         super.onResume();
         if (isDbxLoginInitiated() && !storeAccessToken()) {
             showMessage("Couldn't get access token");
-        }
-
-        if(getAccessToken().isPresent()) {
-            System.out.println("TOKEN IS PRESENT");
-            String token = getAccessToken().get();
-            new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        readDropboxDirectory(token);
-                    }
-                }).start();
-        }
-    }
-
-    private void readDropboxDirectory(String token) {
-        System.out.println("Read dropbox directory");
-        DbxRequestConfig config = new DbxRequestConfig("revisionApp", Locale.getDefault().toString());
-        DbxClientV2 client  = new DbxClientV2(config, token);
-
-
-        try {
-            client.files().listFolder("").getEntries().forEach(System.out::println);
-        } catch (DbxException e) {
-            e.printStackTrace();
         }
     }
 

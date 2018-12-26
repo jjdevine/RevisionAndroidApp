@@ -25,7 +25,7 @@ public class ServiceFactory {
                     App.getContext(),
                     RevisionDatabase.class,
                     "revision-db"
-            ).build();
+            ).fallbackToDestructiveMigration().build();
         }
         return revisionDatabase;
     }

@@ -1,10 +1,13 @@
 package com.jonathandevinesoftware.revisionapp.qaflashcardrevision;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.jonathandevinesoftware.revisionapp.R;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
@@ -45,6 +48,7 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         initIndex();
 
         findViewById(R.id.qaFlashCardNextBtn).setOnClickListener(this::onNextClick);
+        findViewById(R.id.qaFlashCardFavouriteSwitch).setOnClickListener(this::onFavouriteClick);
     }
 
     /**
@@ -53,6 +57,7 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
     private void initIndex() {
         state = State.ONE_DISPLAYED;
         showQuestion();
+        ((TextView)findViewById(R.id.qaFlashCardIndexTV)).setText((index+1)+"");
     }
 
     private void showQuestion() {
@@ -90,6 +95,10 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
                 break;
 
         }
+    }
+
+    private void onFavouriteClick(View view) {
+        //TODO: this
     }
 
 

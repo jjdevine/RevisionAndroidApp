@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".qaflashcardselect.QAFlashcardSelectActivity" />
-        <activity android:name=".qaflashcardrevision.QAFlashCardRevisionActivity"></activity>
+        <activity android:name=".qaflashcardrevision.QAFlashCardRevisionActivity"/>
     </application>
 
 </manifest>

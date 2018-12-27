@@ -1,6 +1,7 @@
 package com.jonathandevinesoftware.revisionapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,8 +34,17 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void onQAFlashCardClick(View view) {
+        if(!isDropBoxConnected()) {
+            showMessage("Connect your dropbox!");
+            return;
+        }
+
         Intent intent = new Intent(this, QAFlashcardSelectActivity.class);
         startActivity(intent);
+    }
+
+    public boolean isDropBoxConnected() {
+        return getAccessToken().isPresent();
     }
 
     public void onDropboxLoginClick(View view) {
@@ -61,7 +71,13 @@ public class MenuActivity extends BaseActivity {
     }
 
     private Optional<String> getAccessToken() {
-        return Optional.of(getPrivatePreferences().getString(DropboxService.DBX_OAUTH_TOKEN, null));
+        SharedPreferences preferences = getPrivatePreferences();
+
+        if(preferences == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(preferences.getString(DropboxService.DBX_OAUTH_TOKEN, null));
     }
 
     private void initiateDbxLogin() {

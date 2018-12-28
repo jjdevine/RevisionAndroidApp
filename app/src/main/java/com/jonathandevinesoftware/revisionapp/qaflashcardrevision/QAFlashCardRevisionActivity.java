@@ -5,13 +5,16 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.jonathandevinesoftware.revisionapp.R;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
+import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCard;
+import com.jonathandevinesoftware.revisionapp.database.QAFlashCardDAO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +25,7 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
     private enum State {ONE_DISPLAYED, BOTH_DISPLAYED}
 
     private QAFlashCardsWrapper qaFlashCardsWrapper;
+    private QAFlashCardDAO qaFlashCardDAO;
     private int index = 0;
     private State state;
 
@@ -31,6 +35,7 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qaflash_card_revision);
 
+        qaFlashCardDAO = ServiceFactory.getRevisionDatabase().qaFlashCardDAO();
         qaFlashCardsWrapper = (QAFlashCardsWrapper) getIntent().getSerializableExtra("flashCards");
         if(qaFlashCardsWrapper == null) {
             showMessage("FlashCards not found!");
@@ -40,7 +45,12 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
     }
 
     private void init() {
-        Collections.shuffle(qaFlashCardsWrapper.getQaFlashCardList());
+        System.out.println("Before shuffle");
+        printFlashCards();
+        shuffleFlashCards();
+        System.out.println("After shuffle");
+        printFlashCards();
+
         TextView titleTV = (TextView) findViewById(R.id.qaFlashCardRevisionTitleText);
         titleTV.setText(qaFlashCardsWrapper.getTopic());
 
@@ -51,6 +61,35 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         findViewById(R.id.qaFlashCardFavouriteSwitch).setOnClickListener(this::onFavouriteClick);
     }
 
+    private void printFlashCards() {
+        qaFlashCardsWrapper.getQaFlashCardList().forEach(System.out::println);
+    }
+
+    private void shuffleFlashCards() {
+        List<QAFlashCard> favouriteFlashCards = new ArrayList<>();
+        List<QAFlashCard> nonFavouriteFlashCards = new ArrayList<>();
+
+        qaFlashCardsWrapper.getQaFlashCardList().forEach(flashCard -> {
+            if(flashCard.isFavourite()) {
+                favouriteFlashCards.add(flashCard);
+            } else {
+                nonFavouriteFlashCards.add(flashCard);
+            }
+        });
+
+        //shuffle voth lists, but we need to favourites to always be before the non favourites
+        Collections.shuffle(favouriteFlashCards);
+        Collections.shuffle(nonFavouriteFlashCards);
+
+        List<QAFlashCard> combinedList = new ArrayList<>();
+        combinedList.addAll(favouriteFlashCards);
+        combinedList.addAll(nonFavouriteFlashCards);
+
+        qaFlashCardsWrapper.getQaFlashCardList().clear();
+        qaFlashCardsWrapper.getQaFlashCardList().addAll(combinedList);
+    }
+
+
     /**
      * Sets the screen to the initial state for this index
      */
@@ -58,16 +97,17 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         state = State.ONE_DISPLAYED;
         showQuestion();
         ((TextView)findViewById(R.id.qaFlashCardIndexTV)).setText((index+1)+"");
+        ((Switch)findViewById(R.id.qaFlashCardFavouriteSwitch)).setChecked(getCurrentFlashCard().isFavourite());
     }
 
     private void showQuestion() {
         TextView questionTV = findViewById(R.id.qaFlashCardQuestionTV);
-        questionTV.setText(qaFlashCardsWrapper.getQaFlashCardList().get(index).getQuestion());
+        questionTV.setText(getCurrentFlashCard().getQuestion());
     }
 
     private void showAnswer() {
         TextView answerTV = findViewById(R.id.qaFlashCardAnswerTV);
-        answerTV.setText(qaFlashCardsWrapper.getQaFlashCardList().get(index).getAnswer());
+        answerTV.setText(getCurrentFlashCard().getAnswer());
     }
 
     private void hideQuestion() {
@@ -88,6 +128,11 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
                 state = State.BOTH_DISPLAYED;
                 break;
             case BOTH_DISPLAYED:
+                if(index+1 == qaFlashCardsWrapper.getQaFlashCardList().size()) {
+                    showMessage("No more flashcards left!");
+                    return;
+                }
+
                 hideQuestion();
                 hideAnswer();
                 index++;
@@ -98,7 +143,18 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
     }
 
     private void onFavouriteClick(View view) {
-        //TODO: this
+        Switch favouriteSwitch = (Switch) view;
+        QAFlashCard qaFlashCard = getCurrentFlashCard();
+        qaFlashCard.setFavourite(favouriteSwitch.isChecked());
+
+        new Thread(
+                () -> {
+                    qaFlashCardDAO.update(qaFlashCard);
+                }).start();
+    }
+
+    private QAFlashCard getCurrentFlashCard() {
+        return qaFlashCardsWrapper.getQaFlashCardList().get(index);
     }
 
 

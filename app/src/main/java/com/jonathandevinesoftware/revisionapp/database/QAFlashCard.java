@@ -11,16 +11,6 @@ import java.util.Objects;
 @Entity(primaryKeys = {"topic", "question"})
 public class QAFlashCard implements Serializable {
 
-    public QAFlashCard(String topic, String question, String answer) {
-        this.topic = topic;
-        this.question = question;
-        this.answer = answer;
-    }
-
-    private QAFlashCard() {
-
-    }
-
     @ColumnInfo(name = "question")
     @NonNull
     private String question;
@@ -32,6 +22,20 @@ public class QAFlashCard implements Serializable {
     @ColumnInfo(name = "topic")
     @NonNull
     private String topic;
+
+    @ColumnInfo(name = "favourite")
+    private boolean favourite;
+
+    public QAFlashCard(String topic, String question, String answer, boolean favourite) {
+        this.topic = topic;
+        this.question = question;
+        this.answer = answer;
+        this.favourite = favourite;
+    }
+
+    private QAFlashCard() {
+
+    }
 
     @NonNull
     public String getQuestion() {
@@ -60,12 +64,21 @@ public class QAFlashCard implements Serializable {
         this.topic = topic;
     }
 
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
     @Override
     public String toString() {
         return "QAFlashCard{" +
                 "question='" + question + '\'' +
                 ", answer='" + answer + '\'' +
                 ", topic='" + topic + '\'' +
+                ", favourite=" + favourite +
                 '}';
     }
 }

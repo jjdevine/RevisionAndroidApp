@@ -7,7 +7,7 @@ import android.arch.persistence.room.RoomDatabase;
         entities = {
                 QAFlashCard.class
         }
-        , version = 2)
+        , version = 3)
 public abstract class RevisionDatabase extends RoomDatabase {
     public abstract QAFlashCardDAO qaFlashCardDAO();
 

@@ -138,7 +138,7 @@ public class QAFlashcardSelectActivity extends BaseActivity {
             List<QAFlashCard> qaFlashCardList = new ArrayList<>();
 
             dropBoxFlashCards.keySet().stream().forEach(key -> {
-                qaFlashCardList.add(new QAFlashCard(topic, key, dropBoxFlashCards.get(key)));
+                qaFlashCardList.add(new QAFlashCard(topic, key, dropBoxFlashCards.get(key), false));
             });
 
             dao.insert(qaFlashCardList.toArray(new QAFlashCard[0]));

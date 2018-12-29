@@ -12,6 +12,6 @@ public class BaseActivity extends Activity {
     }
 
     protected SharedPreferences getPrivatePreferences() {
-        return getSharedPreferences("com.jonathandevinesoftware.revisionapp", Context.MODE_PRIVATE);
+        return SharedPreferenceService.getSharedPreferences();
     }
 }

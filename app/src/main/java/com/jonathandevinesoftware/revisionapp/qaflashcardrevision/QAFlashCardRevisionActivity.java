@@ -1,6 +1,7 @@
 package com.jonathandevinesoftware.revisionapp.qaflashcardrevision;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
     private QAFlashCardDAO qaFlashCardDAO;
     private int index = 0;
     private State state;
+    private QAFlashCardSettingsService.RevealType revealType;
 
 
     @Override
@@ -45,6 +47,7 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
     }
 
     private void init() {
+        revealType = QAFlashCardSettingsService.getRevealType();
         System.out.println("Before shuffle");
         printFlashCards();
         shuffleFlashCards();
@@ -59,6 +62,11 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
 
         findViewById(R.id.qaFlashCardNextBtn).setOnClickListener(this::onNextClick);
         findViewById(R.id.qaFlashCardFavouriteSwitch).setOnClickListener(this::onFavouriteClick);
+        findViewById(R.id.qaFlashCardSettingBtn).setOnClickListener(this::onSettingsClick);
+    }
+
+    private void onSettingsClick(View view) {
+        startActivity(new Intent(this, QAFlashCardSettingsActivity.class));
     }
 
     private void printFlashCards() {
@@ -95,7 +103,21 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
      */
     private void initIndex() {
         state = State.ONE_DISPLAYED;
-        showQuestion();
+        switch (revealType) {
+            case QUESTION_FIRST:
+                showQuestion();
+                break;
+            case ANSWER_FIRST:
+                showAnswer();
+                break;
+            case ALTERNATE:
+                if(index%2 == 0) {
+                    showQuestion();
+                } else {
+                    showAnswer();
+                }
+        }
+
         ((TextView)findViewById(R.id.qaFlashCardIndexTV)).setText((index+1)+"");
         ((Switch)findViewById(R.id.qaFlashCardFavouriteSwitch)).setChecked(getCurrentFlashCard().isFavourite());
     }
@@ -157,5 +179,11 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         return qaFlashCardsWrapper.getQaFlashCardList().get(index);
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("com.jonathandevinesoftware.revisionapp.qaflashcardrevision.QAFlashCardRevisionActivity.onResume");
+        revealType = QAFlashCardSettingsService.getRevealType();
+        System.out.println("Reveal type is : " + revealType.toString());
+    }
 }

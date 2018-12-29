@@ -19,15 +19,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/qaFlashCardRevisionTitleText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="Title"
-            android:textSize="18sp"
-            android:textStyle="italic" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/qaFlashCardRevisionTitleText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Title"
+                android:textSize="18sp"
+                android:textStyle="italic" />
+
+            <ImageButton
+                android:id="@+id/qaFlashCardSettingBtn"
+                style="@style/Widget.AppCompat.ImageButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@android:drawable/ic_menu_manage" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/qaFlashCardQuestionTV"
@@ -35,7 +50,6 @@
             android:layout_height="0dp"
             android:layout_weight="5"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Question"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -46,8 +60,7 @@
             android:layout_weight="5"
             android:gravity="center_vertical|center_horizontal"
             android:textSize="30sp"
-            android:textStyle="bold"
-            tools:text="Answer" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/qaFlashCardButtonLayout"

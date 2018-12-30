@@ -10,6 +10,7 @@ import com.dropbox.core.android.Auth;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.dropbox.DropboxService;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.QAFlashcardSelectActivity;
+import com.jonathandevinesoftware.revisionapp.singleflashcardrevision.SingleFlashCardTopicSelectActivity;
 
 import java.util.Optional;
 
@@ -30,7 +31,8 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void onSingleFlashCardClick(View view) {
-        showMessage("Single FlashCard Select");
+        Intent intent = new Intent(this, SingleFlashCardTopicSelectActivity.class);
+        startActivity(intent);
     }
 
     public void onQAFlashCardClick(View view) {

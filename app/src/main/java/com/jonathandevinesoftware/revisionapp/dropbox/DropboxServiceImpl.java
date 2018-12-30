@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FolderMetadata;
 import com.jonathandevinesoftware.revisionapp.common.App;
 
 import java.io.BufferedReader;
@@ -66,6 +67,23 @@ public class DropboxServiceImpl implements DropboxService {
         }
 
         return flashCards;
+    }
+
+    @Override
+    public List<String> getSingleFlashCardTopics() {
+        try {
+            return getDropboxClient().files()
+                    .listFolder("/SingleFlashcards")
+                    .getEntries()
+                    .stream()
+                    .filter(metadata -> metadata instanceof FolderMetadata)
+                    .map(metadata -> metadata.getName())
+                    .collect(Collectors.toList());
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+
+        return Collections.EMPTY_LIST;
     }
 
     private DbxClientV2 getDropboxClient() {

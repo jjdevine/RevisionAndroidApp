@@ -43,7 +43,9 @@
         </activity>
         <activity android:name=".qaflashcardselect.QAFlashcardSelectActivity" />
         <activity android:name=".qaflashcardrevision.QAFlashCardRevisionActivity" />
-        <activity android:name=".qaflashcardrevision.QAFlashCardSettingsActivity"></activity>
+        <activity android:name=".qaflashcardrevision.QAFlashCardSettingsActivity" />
+        <activity android:name=".singleflashcardrevision.SingleFlashCardTopicSelectActivity" />
+        <activity android:name=".singleflashcardrevision.SingleFlashCardRevisionActivity"></activity>
     </application>
 
 </manifest>

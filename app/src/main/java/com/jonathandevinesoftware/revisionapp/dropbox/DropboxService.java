@@ -11,4 +11,6 @@ public interface DropboxService {
     List<String> getQAFlashCardNames();
 
     Map<String, String> getQAFlashCards(String flashCardName);
+
+    List<String> getSingleFlashCardTopics();
 }

@@ -1,7 +1,6 @@
 package com.jonathandevinesoftware.revisionapp.qaflashcardselect;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -12,23 +11,49 @@ import com.jonathandevinesoftware.revisionapp.R;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCard;
-import com.jonathandevinesoftware.revisionapp.database.QAFlashCardDAO;
 import com.jonathandevinesoftware.revisionapp.database.RevisionDatabase;
 import com.jonathandevinesoftware.revisionapp.qaflashcardrevision.QAFlashCardRevisionActivity;
 import com.jonathandevinesoftware.revisionapp.qaflashcardrevision.QAFlashCardsWrapper;
+import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardDatabaseLoader;
+import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardDropBoxLoader;
+import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardTopicsDatabaseLoader;
+import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardTopicsDropBoxLoader;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class QAFlashcardSelectActivity extends BaseActivity {
+
+    private List<String> loadedTopics = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qaflashcard);
-        new FlashCardNameLoader().execute();
+        new FlashCardTopicsDatabaseLoader(this::onFlashCardNameDatabaseLoaded).execute();
+    }
+
+    private void onFlashCardNameDatabaseLoaded(List<String> topics) {
+        addButtons(topics);
+        loadedTopics.addAll(topics);
+        loadedTopics.forEach(topic -> System.out.println("Loaded topic from Database: " + topic));
+
+        //see if any new topics in dropbox if none are stored locally:
+        //(or required if this is first time app has run)
+        new FlashCardTopicsDropBoxLoader(this::onFlashCardNameDropBoxLoaded).execute();
+    }
+
+    private void onFlashCardNameDropBoxLoaded(List<String> topics) {
+        List<String> newTopics =
+                topics.stream()
+                        .filter(dropBoxTopic -> !loadedTopics.contains(dropBoxTopic))
+                        .collect(Collectors.toList());
+
+        addButtons(topics);
+        loadedTopics.addAll(newTopics);
+        newTopics.forEach(topic -> System.out.println("Loaded topic from DropBox: " + topic));
     }
 
     private void addButtons(List<String> names) {
@@ -78,82 +103,27 @@ public class QAFlashcardSelectActivity extends BaseActivity {
 
         RevisionDatabase revisionDatabase = ServiceFactory.getRevisionDatabase();
 
-        new FlashCardDatabaseLoader().execute(selection);
+        new FlashCardDatabaseLoader(this::FlashCardDatabaseLoaderCallback).execute(selection);
 
         System.out.println(selection);
     }
 
-    class FlashCardNameLoader extends AsyncTask <String, Integer, List<String>> {
-
-        @Override
-        protected List<String> doInBackground(String... strings) {
-            return ServiceFactory.getDropboxService().getQAFlashCardNames();
-        }
-
-        @Override
-        protected void onPostExecute(List<String> flashCardNames) {
-            addButtons(flashCardNames);
+    private void FlashCardDatabaseLoaderCallback(List<QAFlashCard> qaFlashCardList, String topic) {
+        if(qaFlashCardList.size() == 0 ) {
+            System.out.println("No flashcards stored locally, loading from DropBox...");
+            new FlashCardDropBoxLoader(this::FlashCardDropBoxLoaderCallback).execute(topic);
+        } else {
+            System.out.println(qaFlashCardList.size() + " Flashcards loaded from local database");
+            onQAFlashCardsLoaded(topic, qaFlashCardList);
         }
     }
 
-    class FlashCardDatabaseLoader extends AsyncTask<String, Integer, List<QAFlashCard>> {
-
-        String topic;
-
-        @Override
-        protected List<QAFlashCard> doInBackground(String... strings) {
-            if(strings.length != 1) {
-                throw new IllegalArgumentException("Argument list size must be exactly 1");
-            }
-            topic = strings[0];
-            return ServiceFactory.getRevisionDatabase().qaFlashCardDAO().getAllByTopic(strings[0]);
-        }
-
-        @Override
-        protected void onPostExecute(List<QAFlashCard> qaFlashCards) {
-            if(qaFlashCards.size() == 0 ) {
-                System.out.println("No flashcards stored locally, loading from DropBox...");
-                new FlashCardDropboxLoader().execute(topic);
-            } else {
-                System.out.println(qaFlashCards.size() + " Flashcards loaded from local database");
-                onQAFlashCardsLoaded(topic, qaFlashCards);
-            }
-        }
-    }
-
-    class FlashCardDropboxLoader extends AsyncTask<String, Integer, List<QAFlashCard>> {
-        String topic;
-
-        @Override
-        protected List<QAFlashCard> doInBackground(String... strings) {
-            if(strings.length != 1) {
-                throw new IllegalArgumentException("Argument list size must be exactly 1");
-            }
-            topic = strings[0];
-
-            //load flashcards and insert them into the db
-            Map<String, String> dropBoxFlashCards = ServiceFactory.getDropboxService().getQAFlashCards(topic);
-
-            QAFlashCardDAO dao = ServiceFactory.getRevisionDatabase().qaFlashCardDAO();
-            List<QAFlashCard> qaFlashCardList = new ArrayList<>();
-
-            dropBoxFlashCards.keySet().stream().forEach(key -> {
-                qaFlashCardList.add(new QAFlashCard(topic, key, dropBoxFlashCards.get(key), false));
-            });
-
-            dao.insert(qaFlashCardList.toArray(new QAFlashCard[0]));
-
-            return qaFlashCardList;
-        }
-
-        @Override
-        protected void onPostExecute(List<QAFlashCard> qaFlashCards) {
-            if(qaFlashCards.size() == 0 ) {
-                showMessage("Unable to load flashcards from device or DropBox");
-            } else {
-                System.out.println(qaFlashCards.size() + " Flashcards loaded from dropbox");
-                onQAFlashCardsLoaded(topic, qaFlashCards);
-            }
+    private void FlashCardDropBoxLoaderCallback(List<QAFlashCard> qaFlashCardList, String topic) {
+        if(qaFlashCardList.size() == 0 ) {
+            showMessage("Unable to load flashcards from device or DropBox");
+        } else {
+            System.out.println(qaFlashCardList.size() + " Flashcards loaded from dropbox");
+            onQAFlashCardsLoaded(topic, qaFlashCardList);
         }
     }
 

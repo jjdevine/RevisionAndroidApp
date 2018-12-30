@@ -2,6 +2,7 @@ package com.jonathandevinesoftware.revisionapp.common;
 
 import android.app.Application;
 import android.content.Context;
+import android.widget.Toast;
 
 public class App extends Application {
 
@@ -13,6 +14,10 @@ public class App extends Application {
 
     public static Context getContext() {
         return getApplication().getApplicationContext();
+    }
+
+    public static void showMessage(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

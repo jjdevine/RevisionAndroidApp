@@ -8,7 +8,7 @@ import android.widget.Toast;
 public class BaseActivity extends Activity {
 
     protected void showMessage(String text) {
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        App.showMessage(text);
     }
 
     protected SharedPreferences getPrivatePreferences() {

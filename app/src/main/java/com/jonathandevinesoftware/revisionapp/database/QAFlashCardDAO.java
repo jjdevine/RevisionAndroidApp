@@ -26,4 +26,7 @@ public interface QAFlashCardDAO {
     @Query("SELECT * FROM QAFlashCard WHERE topic = :topic")
     List<QAFlashCard> getAllByTopic(String topic);
 
+    @Query("SELECT DISTINCT topic FROM QAFlashCard ORDER BY topic")
+    List<String> getAllTopics();
+
 }

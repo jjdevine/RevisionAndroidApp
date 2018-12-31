@@ -6,10 +6,13 @@ import android.content.SharedPreferences;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.jonathandevinesoftware.revisionapp.common.App;
+import com.jonathandevinesoftware.revisionapp.database.SingleFlashCard;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -84,6 +87,57 @@ public class DropboxServiceImpl implements DropboxService {
         }
 
         return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public List<String> getSingleFlashCardFileNames(String topic) {
+        try {
+            return getDropboxClient().files()
+                    .listFolder("/SingleFlashcards/" + topic)
+                    .getEntries()
+                    .stream()
+                    .filter(metadata -> metadata instanceof FileMetadata)
+                    .map(metadata -> metadata.getName())
+                    .collect(Collectors.toList());
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public Optional<SingleFlashCard> getSingleFlashCard(String topic, String fileName) {
+
+        try {
+            InputStream is = getDropboxClient().files().download("/SingleFlashcards/" + topic + "/" + fileName).getInputStream();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            StringBuilder result = new StringBuilder();
+
+            String line = null;
+
+            String title = "noTitle";
+            String mainText = "noMainText";
+
+            int lineIndex = 0;
+            while((line = reader.readLine()) != null) {
+                if(lineIndex == 0) {
+                    title = line;
+                } else if(lineIndex >= 2) {
+                    result.append(line + "\n");
+                }
+                lineIndex++;
+            }
+
+            return Optional.of(new SingleFlashCard(topic, fileName, title, result.toString()));
+
+        } catch (DbxException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 
     private DbxClientV2 getDropboxClient() {

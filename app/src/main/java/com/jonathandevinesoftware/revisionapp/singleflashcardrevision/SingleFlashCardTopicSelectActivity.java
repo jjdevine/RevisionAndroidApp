@@ -1,6 +1,7 @@
 package com.jonathandevinesoftware.revisionapp.singleflashcardrevision;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.jonathandevinesoftware.revisionapp.R;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
+import com.jonathandevinesoftware.revisionapp.database.SingleFlashCard;
 import com.jonathandevinesoftware.revisionapp.singleflashcardrevision.tasks.SingleFlashCardTopicsDropBoxLoader;
 
 import java.util.List;
@@ -57,7 +59,11 @@ public class SingleFlashCardTopicSelectActivity extends BaseActivity {
     }
 
     public void onTopicSelection(String topic) {
-        showMessage("selected " + topic);
+        Intent intent = new Intent(this, SingleFlashCardRevisionActivity.class);
+        intent.putExtra("topic", topic);
+        startActivity(intent);
     }
+
+
 
 }

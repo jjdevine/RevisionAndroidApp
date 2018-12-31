@@ -15,13 +15,16 @@ public class SingleFlashCard {
     @NonNull
     private String fileName;
 
-    @ColumnInfo(name = "maintText")
-    @NonNull
+    @ColumnInfo(name = "title")
+    private String title;
+
+    @ColumnInfo(name = "mainText")
     private String mainText;
 
-    public SingleFlashCard(String topic, String fileName, String mainText) {
+    public SingleFlashCard(String topic, String fileName, String title, String mainText) {
         this.topic = topic;
         this.fileName = fileName;
+        this.title = title;
         this.mainText = mainText;
     }
 
@@ -54,11 +57,20 @@ public class SingleFlashCard {
         this.mainText = mainText;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public String toString() {
         return "SingleFlashCard{" +
                 "topic='" + topic + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", title='" + title + '\'' +
                 ", mainText='" + mainText + '\'' +
                 '}';
     }

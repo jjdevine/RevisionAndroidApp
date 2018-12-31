@@ -5,11 +5,14 @@ import android.arch.persistence.room.RoomDatabase;
 
 @Database(
         entities = {
-                QAFlashCard.class
+                QAFlashCard.class,
+                SingleFlashCard.class
         }
-        , version = 3)
+        , version = 5)
 public abstract class RevisionDatabase extends RoomDatabase {
     public abstract QAFlashCardDAO qaFlashCardDAO();
+
+    public abstract SingleFlashCardDAO singleFlashCardDAO();
 
 
 }

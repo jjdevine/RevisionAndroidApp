@@ -1,7 +1,10 @@
 package com.jonathandevinesoftware.revisionapp.dropbox;
 
+import com.jonathandevinesoftware.revisionapp.database.SingleFlashCard;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface DropboxService {
 
@@ -13,4 +16,8 @@ public interface DropboxService {
     Map<String, String> getQAFlashCards(String flashCardName);
 
     List<String> getSingleFlashCardTopics();
+
+    List<String> getSingleFlashCardFileNames(String topic);
+
+    Optional<SingleFlashCard> getSingleFlashCard(String topic, String fileName);
 }

@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class QAFlashcardSelectActivity extends BaseActivity {
 
     private List<String> loadedTopics = new ArrayList<>();
+    private Button lastButton = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +52,12 @@ public class QAFlashcardSelectActivity extends BaseActivity {
                         .filter(dropBoxTopic -> !loadedTopics.contains(dropBoxTopic))
                         .collect(Collectors.toList());
 
-        addButtons(topics);
+        addButtons(newTopics);
         loadedTopics.addAll(newTopics);
         newTopics.forEach(topic -> System.out.println("Loaded topic from DropBox: " + topic));
     }
 
     private void addButtons(List<String> names) {
-
-        Button lastButton = null;
 
         for(String name: names) {
             lastButton = addButton(name, lastButton);

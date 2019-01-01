@@ -29,4 +29,6 @@ public interface QAFlashCardDAO {
     @Query("SELECT DISTINCT topic FROM QAFlashCard ORDER BY topic")
     List<String> getAllTopics();
 
+    @Query("DELETE FROM QAFlashCard")
+    void deleteAll();
 }

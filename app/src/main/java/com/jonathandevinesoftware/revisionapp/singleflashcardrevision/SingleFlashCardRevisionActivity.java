@@ -2,10 +2,13 @@ package com.jonathandevinesoftware.revisionapp.singleflashcardrevision;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.MovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
 import com.jonathandevinesoftware.revisionapp.R;
+import com.jonathandevinesoftware.revisionapp.common.App;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.database.SingleFlashCard;
 import com.jonathandevinesoftware.revisionapp.singleflashcardrevision.tasks.SingleFlashCardFileNameLoader;
@@ -37,6 +40,8 @@ public class SingleFlashCardRevisionActivity extends BaseActivity {
 
         findViewById(R.id.sfcNextBtn).setOnClickListener(this::onNextClick);
         findViewById(R.id.sfcPrevBtn).setOnClickListener(this::onPrevClick);
+        makeTextViewScrollable(R.id.sfcMainText);
+        makeTextViewScrollable(R.id.sfcTitleText);
     }
 
     private void onFileNameLoad(List<String> fileNames) {
@@ -77,7 +82,7 @@ public class SingleFlashCardRevisionActivity extends BaseActivity {
 
     private void onPrevClick(View view) {
         if(index > 0 ) {
-            index++;
+            index--;
             displayIndex();
         }
     }

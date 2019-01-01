@@ -1,13 +1,18 @@
 package com.jonathandevinesoftware.revisionapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
 import com.dropbox.core.android.Auth;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
+import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
+import com.jonathandevinesoftware.revisionapp.database.tasks.CleardownDataTask;
 import com.jonathandevinesoftware.revisionapp.dropbox.DropboxService;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.QAFlashcardSelectActivity;
 import com.jonathandevinesoftware.revisionapp.singleflashcardrevision.SingleFlashCardTopicSelectActivity;
@@ -24,18 +29,54 @@ public class MenuActivity extends BaseActivity {
         Button singleFlashCardButton = findViewById(R.id.buttonSingleFlashcard);
         Button qaFlashCardButton = findViewById(R.id.buttonQAFlashcard);
         Button dbxLoginButton = findViewById(R.id.buttonDbxLogin);
+        Button clearCacheButton = findViewById(R.id.buttonClearLocalCache);
 
         singleFlashCardButton.setOnClickListener(this::onSingleFlashCardClick);
         qaFlashCardButton.setOnClickListener(this::onQAFlashCardClick);
-        dbxLoginButton.setOnClickListener(this::onDropboxLoginClick);
+        dbxLoginButton.setOnClickListener(this::onDropBoxLoginClick);
+        clearCacheButton.setOnClickListener(this::onClearLocalCacheClick);
     }
 
-    public void onSingleFlashCardClick(View view) {
+    private void onClearLocalCacheClick(View view) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder
+                .setMessage("Are you sure you want to clear all locally cached data?")
+                .setTitle("Clear Local Data")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new CleardownDataTask(MenuActivity.this::clearDownDataCallback).execute();
+                    }
+                })
+                .setNegativeButton("No", null).show();
+
+
+    }
+
+    private void clearDownDataCallback(Boolean success) {
+
+        String alertTitle;
+        String alertMessage;
+
+        if(Boolean.TRUE == success) {
+            alertTitle = "Local Data Cleared";
+            alertMessage = "Local cache cleared successfully!";
+        } else {
+            alertTitle = "Local Data Failed to Clear";
+            alertMessage = "Unable to clear local cache!";
+        }
+
+        new AlertDialog.Builder(this).setTitle(alertTitle).setMessage(alertMessage).show();
+    }
+
+    private void onSingleFlashCardClick(View view) {
         Intent intent = new Intent(this, SingleFlashCardTopicSelectActivity.class);
         startActivity(intent);
     }
 
-    public void onQAFlashCardClick(View view) {
+    private void onQAFlashCardClick(View view) {
         if(!isDropBoxConnected()) {
             showMessage("Connect your dropbox!");
             return;
@@ -45,11 +86,11 @@ public class MenuActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public boolean isDropBoxConnected() {
+    private boolean isDropBoxConnected() {
         return getAccessToken().isPresent();
     }
 
-    public void onDropboxLoginClick(View view) {
+    private void onDropBoxLoginClick(View view) {
         initiateDbxLogin();
         Auth.startOAuth2Authentication(getApplicationContext(), getString(R.string.APP_KEY));
     }

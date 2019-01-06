@@ -24,8 +24,14 @@ public interface SingleFlashCardDAO {
     @Query("SELECT fileName FROM SingleFlashCard WHERE topic = :topic")
     List<String> getFileNames(String topic);
 
+    @Query("SELECT fileName FROM SingleFlashCard WHERE topic = :topic AND mainText IS NOT NULL")
+    List<String> getFileNamesForCompleteFlashCards(String topic);
+
     @Query("SELECT * FROM SingleFlashCard WHERE topic = :topic AND fileName = :fileName")
     SingleFlashCard getByTopicAndFileName(String topic, String fileName);
+
+    @Query("SELECT DISTINCT topic FROM SingleFlashCard")
+    List<String> getTopics();
 
     @Query("DELETE FROM SingleFlashCard")
     void deleteAll();

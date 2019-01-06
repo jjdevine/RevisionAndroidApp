@@ -3,10 +3,12 @@ package com.jonathandevinesoftware.revisionapp.singleflashcardrevision.tasks;
 import android.app.Service;
 import android.os.AsyncTask;
 
+import com.jonathandevinesoftware.revisionapp.common.App;
 import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.SingleFlashCard;
 import com.jonathandevinesoftware.revisionapp.database.SingleFlashCardDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -32,26 +34,38 @@ public class SingleFlashCardFileNameLoader extends AsyncTask<String, Integer, Li
         }
         String topic = strings[0];
 
+        if(!App.hasNetworkAccess()) {
+            System.out.println("Offline - only returning locally stored flashcard names");
+            //only return flashcards fully stored in local db
+            return ServiceFactory.getRevisionDatabase().singleFlashCardDAO().getFileNamesForCompleteFlashCards(topic);
+        }
+
         SingleFlashCardDAO dao = ServiceFactory.getRevisionDatabase().singleFlashCardDAO();
 
         List<String> fileNames = dao.getFileNames(topic);
+        System.out.println(fileNames.size() + " flashcard(s) loaded from db");
 
-        //if database contains filenames, return results from DB
-        if(!fileNames.isEmpty()) {
-            return fileNames;
+        //check any additions from DropBox ...
+        List<String> dropBoxFileNames = ServiceFactory.getDropboxService().getSingleFlashCardFileNames(topic);
+        List<SingleFlashCard> dropBoxFlashCards = new ArrayList<>();
+
+        for(String dropBoxFileName : dropBoxFileNames) {
+            if(fileNames.contains(dropBoxFileName)) {
+               continue; //skip any that already exist in local db
+            }
+
+            //add this flashcard to db
+            dropBoxFlashCards.add(new SingleFlashCard(topic, dropBoxFileName, null, null));
+
+            //add to list of names to return
+            fileNames.add(dropBoxFileName);
         }
 
-        //otherwise refer to DropBox...
+        if(dropBoxFlashCards.size() > 0) {
+            dao.insert(dropBoxFlashCards.toArray(new SingleFlashCard[0]));
+        }
 
-        fileNames = ServiceFactory.getDropboxService().getSingleFlashCardFileNames(topic);
-
-        //populate results from DropBox into local DB
-        List<SingleFlashCard> singleFlashCardList =
-                fileNames.stream()
-                    .map(fileName -> new SingleFlashCard(topic, fileName, null, null))
-                    .collect(Collectors.toList());
-
-        dao.insert(singleFlashCardList.toArray(new SingleFlashCard[0]));
+        System.out.println(fileNames.size() + " flashcard(s) loaded in total");
 
         return fileNames;
     }

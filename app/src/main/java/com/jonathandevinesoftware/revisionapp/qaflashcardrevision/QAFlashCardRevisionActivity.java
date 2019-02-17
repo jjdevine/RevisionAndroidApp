@@ -37,6 +37,9 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qaflash_card_revision);
 
+        makeTextViewScrollable(R.id.qaFlashCardQuestionTV);
+        makeTextViewScrollable(R.id.qaFlashCardAnswerTV);
+
         qaFlashCardDAO = ServiceFactory.getRevisionDatabase().qaFlashCardDAO();
         qaFlashCardsWrapper = (QAFlashCardsWrapper) getIntent().getSerializableExtra("flashCards");
         if(qaFlashCardsWrapper == null) {

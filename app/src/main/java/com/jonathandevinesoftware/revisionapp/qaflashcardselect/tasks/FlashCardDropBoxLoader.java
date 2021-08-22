@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCard;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCardDAO;
+import com.jonathandevinesoftware.revisionapp.database.QAFlashCardSetting;
+import com.jonathandevinesoftware.revisionapp.database.QAFlashCardSettingDAO;
+import com.jonathandevinesoftware.revisionapp.dropbox.QAFlashCardSourceData;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.QAFlashcardSelectActivity;
 
 import java.util.ArrayList;
@@ -28,16 +31,36 @@ public class FlashCardDropBoxLoader extends AsyncTask<String, Integer, List<QAFl
         topic = strings[0];
 
         //load flashcards and insert them into the db
-        Map<String, String> dropBoxFlashCards = ServiceFactory.getDropboxService().getQAFlashCards(topic);
+        QAFlashCardSourceData qaFlashCardSourceData = ServiceFactory.getDropboxService().getQAFlashCards(topic);
 
-        QAFlashCardDAO dao = ServiceFactory.getRevisionDatabase().qaFlashCardDAO();
+        /*
+            process flashcards
+         */
+        QAFlashCardDAO flashCardDAO = ServiceFactory.getRevisionDatabase().qaFlashCardDAO();
         List<QAFlashCard> qaFlashCardList = new ArrayList<>();
 
-        dropBoxFlashCards.keySet().stream().forEach(key -> {
-            qaFlashCardList.add(new QAFlashCard(topic, key, dropBoxFlashCards.get(key), false));
+        Map<String, String> flashCards = qaFlashCardSourceData.getFlashCards();
+
+        flashCards.keySet().stream().forEach(key -> {
+            qaFlashCardList.add(new QAFlashCard(topic, key, flashCards.get(key), false));
         });
 
-        dao.insert(qaFlashCardList.toArray(new QAFlashCard[0]));
+        flashCardDAO.insert(qaFlashCardList.toArray(new QAFlashCard[0]));
+
+        /*
+            process settings
+         */
+
+        QAFlashCardSettingDAO settingDao = ServiceFactory.getRevisionDatabase().qaFlashCardSettingDAO();
+        List<QAFlashCardSetting> qaFlashCardSettingList = new ArrayList<>();
+
+        Map<String, String> flashCardSettings = qaFlashCardSourceData.getSettings();
+
+        flashCardSettings.keySet().stream().forEach(key -> {
+            qaFlashCardSettingList.add(new QAFlashCardSetting(topic, key, flashCardSettings.get(key)));
+        });
+
+        settingDao.insert(qaFlashCardSettingList.toArray(new QAFlashCardSetting[0]));
 
         return qaFlashCardList;
     }

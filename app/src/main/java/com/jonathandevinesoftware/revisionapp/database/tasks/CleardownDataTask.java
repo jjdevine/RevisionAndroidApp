@@ -22,6 +22,7 @@ public class CleardownDataTask extends AsyncTask<String, Integer, Boolean> {
 
         ServiceFactory.getRevisionDatabase().singleFlashCardDAO().deleteAll();
         ServiceFactory.getRevisionDatabase().qaFlashCardDAO().deleteAll();
+        ServiceFactory.getRevisionDatabase().qaFlashCardSettingDAO().deleteAll();
         return true;
     }
 

@@ -45,10 +45,13 @@ public class DropboxServiceImpl implements DropboxService {
         return Collections.EMPTY_LIST;
     }
 
-    @Override
-    public Map<String, String> getQAFlashCards(String flashCardName) {
+    public QAFlashCardSourceData getQAFlashCards(String flashCardName) {
 
         Map<String, String> flashCards = new HashMap<>();
+        Map<String, String> settings = new HashMap<>();
+        QAFlashCardSourceData qaFlashCardSourceData = new QAFlashCardSourceData();
+        qaFlashCardSourceData.setFlashCards(flashCards);
+        qaFlashCardSourceData.setSettings(settings);
 
         try {
             InputStream is = getDropboxClient().files().download("/QAFlashCards/" + flashCardName + ".txt").getInputStream();
@@ -57,7 +60,12 @@ public class DropboxServiceImpl implements DropboxService {
 
             reader.lines().forEach(line -> {
                 line = line.trim();
-                if(!line.startsWith("#")) {  //lines starting with hash are comments
+                if(line.startsWith("#SETTING-")) {  //the format for settings is "#SETTING-SETTINGNAME=SETTINGVALUE
+                    String[] tokens = line.split("=");
+                    if(tokens.length == 2) { //lines must be two strings separated by an equals
+                        settings.put(tokens[0].substring(9), tokens[1]);
+                    }
+                } else if(!line.startsWith("#")) {  //lines starting with hash are comments
                     String[] tokens = line.split("=");
                     if(tokens.length == 2) { //lines must be two strings separated by an equals
                         flashCards.put(tokens[0], tokens[1]);
@@ -69,7 +77,7 @@ public class DropboxServiceImpl implements DropboxService {
             e.printStackTrace();
         }
 
-        return flashCards;
+        return qaFlashCardSourceData;
     }
 
     @Override

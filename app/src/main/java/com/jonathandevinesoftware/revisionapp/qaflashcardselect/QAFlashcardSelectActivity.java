@@ -11,11 +11,13 @@ import com.jonathandevinesoftware.revisionapp.R;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCard;
+import com.jonathandevinesoftware.revisionapp.database.QAFlashCardSetting;
 import com.jonathandevinesoftware.revisionapp.database.RevisionDatabase;
 import com.jonathandevinesoftware.revisionapp.qaflashcardrevision.QAFlashCardRevisionActivity;
 import com.jonathandevinesoftware.revisionapp.qaflashcardrevision.QAFlashCardsWrapper;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardDatabaseLoader;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardDropBoxLoader;
+import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardSettingsDatabaseLoader;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardTopicsDatabaseLoader;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardTopicsDropBoxLoader;
 
@@ -114,7 +116,7 @@ public class QAFlashcardSelectActivity extends BaseActivity {
             new FlashCardDropBoxLoader(this::FlashCardDropBoxLoaderCallback).execute(topic);
         } else {
             System.out.println(qaFlashCardList.size() + " Flashcards loaded from local database");
-            onQAFlashCardsLoaded(topic, qaFlashCardList);
+            loadQAFlashCardsSettings(topic, qaFlashCardList);
         }
     }
 
@@ -123,14 +125,22 @@ public class QAFlashcardSelectActivity extends BaseActivity {
             showMessage("Unable to load flashcards from device or DropBox");
         } else {
             System.out.println(qaFlashCardList.size() + " Flashcards loaded from dropbox");
-            onQAFlashCardsLoaded(topic, qaFlashCardList);
+            loadQAFlashCardsSettings(topic, qaFlashCardList);
         }
     }
 
-    private void onQAFlashCardsLoaded(String topic, List<QAFlashCard> qaFlashCardList) {
+    private void loadQAFlashCardsSettings(String topic, List<QAFlashCard> qaFlashCardList) {
+
+        System.out.println("loadQAFlashCardsSettings");
+        new FlashCardSettingsDatabaseLoader(qaFlashCardSettings -> onQAFlashCardsLoaded(topic, qaFlashCardList, qaFlashCardSettings)).execute(topic);
+    }
+
+    private void onQAFlashCardsLoaded(String topic, List<QAFlashCard> qaFlashCardList, List<QAFlashCardSetting> qaFlashCardSettingList) {
         qaFlashCardList.forEach(System.out::println);
         Intent intent = new Intent(this, QAFlashCardRevisionActivity.class);
-        intent.putExtra("flashCards", new QAFlashCardsWrapper(topic, qaFlashCardList));
+        intent.putExtra("flashCards", new QAFlashCardsWrapper(topic, qaFlashCardList, qaFlashCardSettingList));
+        System.out.println("Number of settings found: " + qaFlashCardSettingList.size());
+        qaFlashCardSettingList.forEach(System.out::println);
         startActivity(intent);
     }
 

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCard;
+import com.jonathandevinesoftware.revisionapp.database.QAFlashCardSetting;
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.QAFlashcardSelectActivity;
 
 import java.util.List;

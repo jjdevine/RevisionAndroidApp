@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.common.ServiceFactory;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCard;
 import com.jonathandevinesoftware.revisionapp.database.QAFlashCardDAO;
+import com.jonathandevinesoftware.revisionapp.database.QAFlashCardSetting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,12 +62,43 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
         TextView titleTV = (TextView) findViewById(R.id.qaFlashCardRevisionTitleText);
         titleTV.setText(qaFlashCardsWrapper.getTopic());
 
+        applySettings(qaFlashCardsWrapper.getQaFlashCardSettingList());
 
         initIndex();
 
         findViewById(R.id.qaFlashCardNextBtn).setOnClickListener(this::onNextClick);
         findViewById(R.id.qaFlashCardFavouriteSwitch).setOnClickListener(this::onFavouriteClick);
         findViewById(R.id.qaFlashCardSettingBtn).setOnClickListener(this::onSettingsClick);
+    }
+
+    private void applySettings(List<QAFlashCardSetting> settings) {
+        System.out.println("applySettings");
+        System.out.println(settings);
+        for(QAFlashCardSetting setting: settings) {
+            if("QUESTION_LAYOUT_WEIGHT".equalsIgnoreCase(setting.getName())) {
+                int qlwValue = parseSettingValue(setting.getValue(), 5);
+
+                //total is always 10 to avoid changing other components on the layout
+                findViewById(R.id.qaFlashCardQuestionTV)
+                        .setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, qlwValue));
+                findViewById(R.id.qaFlashCardAnswerTV)
+                        .setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 10-qlwValue));
+
+            } else if("QUESTION_FONT_SIZE".equalsIgnoreCase(setting.getName())) {
+                ((TextView)findViewById(R.id.qaFlashCardQuestionTV)).setTextSize(parseSettingValue(setting.getValue(), 30));
+            } else if("ANSWER_FONT_SIZE".equalsIgnoreCase(setting.getName())) {
+                ((TextView)findViewById(R.id.qaFlashCardAnswerTV)).setTextSize(parseSettingValue(setting.getValue(), 30));
+            }
+        }
+    }
+
+    private int parseSettingValue(String value, int defaultVal) {
+        try {
+            return Integer.parseInt(value);
+        } catch( NumberFormatException ex) {
+            System.out.println("Cannot parse value - " + value);
+            return defaultVal;
+        }
     }
 
     private void onSettingsClick(View view) {

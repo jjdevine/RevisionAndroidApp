@@ -1,6 +1,8 @@
 package com.jonathandevinesoftware.revisionapp.qaflashcardselect;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -76,6 +78,8 @@ public class QAFlashcardSelectActivity extends BaseActivity {
         newButton.setText(title);
         newButton.setHeight(50);
         newButton.setId(new Random().nextInt(99999999));
+        newButton.setBackgroundColor(getResources().getColor(R.color.buttonBackground));
+        newButton.setTextColor(getResources().getColor(R.color.text));
 
         layout.addView(newButton);
 

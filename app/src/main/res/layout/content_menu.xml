@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="#000000"
     tools:context=".MenuActivity"
     tools:showIn="@layout/activity_menu">
 
@@ -24,31 +25,40 @@
             android:fontFamily="monospace"
             android:text="Main Menu"
             android:textAlignment="center"
+            android:textColor="@color/text"
             android:textSize="30sp" />
 
         <Button
             android:id="@+id/buttonSingleFlashcard"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Single Flashcards" />
+            android:backgroundTint="#353535"
+            android:text="Single Flashcards"
+            android:textColor="@color/text" />
 
         <Button
             android:id="@+id/buttonQAFlashcard"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Q&amp;A Flashcards" />
+            android:backgroundTint="#353535"
+            android:text="Q&amp;A Flashcards"
+            android:textColor="@color/text" />
 
         <Button
             android:id="@+id/buttonDbxLogin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Dropbox Login" />
+            android:backgroundTint="#353535"
+            android:text="Dropbox Login"
+            android:textColor="@color/text" />
 
         <Button
             android:id="@+id/buttonClearLocalCache"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Clear Local Cache" />
+            android:backgroundTint="#353535"
+            android:text="Clear Local Cache"
+            android:textColor="@color/text" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

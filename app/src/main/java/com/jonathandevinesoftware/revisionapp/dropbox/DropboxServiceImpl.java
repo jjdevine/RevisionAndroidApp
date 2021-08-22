@@ -68,7 +68,7 @@ public class DropboxServiceImpl implements DropboxService {
                 } else if(!line.startsWith("#")) {  //lines starting with hash are comments
                     String[] tokens = line.split("=");
                     if(tokens.length == 2) { //lines must be two strings separated by an equals
-                        flashCards.put(tokens[0], tokens[1]);
+                        flashCards.put(tokens[0].replace("\\n", "\n"), tokens[1].replace("\\n", "\n"));
                     }
                 }
             });

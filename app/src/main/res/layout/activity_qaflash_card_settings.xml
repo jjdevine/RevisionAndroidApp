@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".qaflashcardrevision.QAFlashCardSettingsActivity">
 
     <LinearLayout
@@ -26,6 +27,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical|center_horizontal"
             android:text="Q&amp;A FlashCardSettings"
+            android:textColor="@color/text"
             android:textSize="24sp" />
 
         <RadioGroup
@@ -39,21 +41,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Display Question First" />
+                android:backgroundTint="@color/toolbarButtonBackground"
+                android:buttonTint="#777777"
+                android:text="Display Question First"
+                android:textColor="@color/text" />
 
             <RadioButton
                 android:id="@+id/qaFlashCardSettingsAnswerFirstRadio"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Display Answer First" />
+                android:backgroundTint="@color/toolbarButtonBackground"
+                android:buttonTint="#777777"
+                android:text="Display Answer First"
+                android:textColor="@color/text" />
 
             <RadioButton
                 android:id="@+id/qaFlashCardSettingsAlternateRadio"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Alternate" />
+                android:backgroundTint="@color/toolbarButtonBackground"
+                android:buttonTint="#777777"
+                android:text="Alternate"
+                android:textColor="@color/text" />
 
         </RadioGroup>
 
@@ -63,7 +74,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/toolbarButtonBackground"
             android:text="Done"
+            android:textColor="@color/text"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="487dp" />
 

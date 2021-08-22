@@ -1,6 +1,7 @@
 package com.jonathandevinesoftware.revisionapp.singleflashcardrevision;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -45,6 +46,8 @@ public class SingleFlashCardTopicSelectActivity extends BaseActivity {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         200));
         newButton.setId(new Random().nextInt(99999999));
+        newButton.setBackgroundColor(getResources().getColor(R.color.buttonBackground));
+        newButton.setTextColor(getResources().getColor(R.color.text));
 
         layout.addView(newButton);
 

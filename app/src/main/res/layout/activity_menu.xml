@@ -3,9 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".MenuActivity">
 
-    <include layout="@layout/content_menu" />
+    <include
+        layout="@layout/content_menu"
+        android:background="#000000" />
 
 
 </android.support.design.widget.CoordinatorLayout>

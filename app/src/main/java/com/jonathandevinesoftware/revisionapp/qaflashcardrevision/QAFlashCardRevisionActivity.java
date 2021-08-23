@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -88,6 +89,10 @@ public class QAFlashCardRevisionActivity extends BaseActivity {
                 ((TextView)findViewById(R.id.qaFlashCardQuestionTV)).setTextSize(parseSettingValue(setting.getValue(), 30));
             } else if("ANSWER_FONT_SIZE".equalsIgnoreCase(setting.getName())) {
                 ((TextView)findViewById(R.id.qaFlashCardAnswerTV)).setTextSize(parseSettingValue(setting.getValue(), 30));
+            } else if("ANSWER_ALIGNMENT".equalsIgnoreCase(setting.getName())) {
+                if("LEFT".equalsIgnoreCase(setting.getValue())) {
+                    ((TextView) findViewById(R.id.qaFlashCardAnswerTV)).setGravity(Gravity.LEFT);
+                }
             }
         }
     }

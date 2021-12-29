@@ -1,6 +1,6 @@
 package com.jonathandevinesoftware.revisionapp.common;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import com.jonathandevinesoftware.revisionapp.database.RevisionDatabase;
 import com.jonathandevinesoftware.revisionapp.dropbox.DropboxService;

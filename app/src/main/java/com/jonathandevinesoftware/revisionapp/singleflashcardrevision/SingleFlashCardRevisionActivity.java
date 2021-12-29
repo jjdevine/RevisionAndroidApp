@@ -1,14 +1,10 @@
 package com.jonathandevinesoftware.revisionapp.singleflashcardrevision;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.MovementMethod;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.TextView;
 
 import com.jonathandevinesoftware.revisionapp.R;
-import com.jonathandevinesoftware.revisionapp.common.App;
 import com.jonathandevinesoftware.revisionapp.common.BaseActivity;
 import com.jonathandevinesoftware.revisionapp.database.SingleFlashCard;
 import com.jonathandevinesoftware.revisionapp.singleflashcardrevision.tasks.SingleFlashCardFileNameLoader;

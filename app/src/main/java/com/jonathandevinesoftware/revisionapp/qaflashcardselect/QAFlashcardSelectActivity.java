@@ -40,8 +40,8 @@ public class QAFlashcardSelectActivity extends BaseActivity {
     }
 
     private void onFlashCardNameDatabaseLoaded(List<String> topics) {
-        addButtons(topics);
         loadedTopics.addAll(topics);
+        refreshButtons();
         loadedTopics.forEach(topic -> System.out.println("Loaded topic from Database: " + topic));
 
         //see if any new topics in dropbox if none are stored locally:
@@ -55,9 +55,36 @@ public class QAFlashcardSelectActivity extends BaseActivity {
                         .filter(dropBoxTopic -> !loadedTopics.contains(dropBoxTopic))
                         .collect(Collectors.toList());
 
-        addButtons(newTopics);
         loadedTopics.addAll(newTopics);
+        refreshButtons();
         newTopics.forEach(topic -> System.out.println("Loaded topic from DropBox: " + topic));
+    }
+
+    int pageOffset = 0;
+    int pageSize = 10;
+    String nextPageText = "SEE NEXT PAGE >>";
+
+    private void refreshButtons() {
+        clearButtons();
+        System.out.println("pageOffset " + pageOffset);
+        System.out.println("loadedtopics " + loadedTopics.size());
+        if(loadedTopics.size() > 10) {
+            lastButton = addButton(nextPageText, lastButton);
+            for(int x = pageOffset; x<=loadedTopics.size()-1 && x<(pageOffset + pageSize); x++) {
+                lastButton = addButton(loadedTopics.get(x), lastButton);
+            }
+        } else {
+            addButtons(loadedTopics);
+        }
+    }
+
+    private void showNextPage() {
+        pageOffset += pageSize;
+        if(pageOffset > loadedTopics.size()-1) {
+            pageOffset = 0;
+        }
+
+        refreshButtons();
     }
 
     private void addButtons(List<String> names) {
@@ -69,6 +96,7 @@ public class QAFlashcardSelectActivity extends BaseActivity {
 
     private Button addButton(String title, Button lastButton) {
 
+        System.out.println("Adding Button " + title);
         ConstraintLayout layout = findViewById(R.id.qaFlashcardButtonLayout);
         ConstraintSet constraintSet = new ConstraintSet();
 
@@ -103,7 +131,20 @@ public class QAFlashcardSelectActivity extends BaseActivity {
         return newButton;
     }
 
+    private void clearButtons() {
+        ConstraintLayout layout = findViewById(R.id.qaFlashcardButtonLayout);
+        layout.removeAllViewsInLayout();
+        lastButton = null;
+    }
+
+
+
     public void onFlashcardSelection(String selection) {
+
+        if(selection.equals(nextPageText)) {
+            showNextPage();
+            return;
+        }
 
         RevisionDatabase revisionDatabase = ServiceFactory.getRevisionDatabase();
 

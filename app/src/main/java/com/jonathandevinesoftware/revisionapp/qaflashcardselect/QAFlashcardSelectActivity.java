@@ -22,6 +22,7 @@ import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardT
 import com.jonathandevinesoftware.revisionapp.qaflashcardselect.tasks.FlashCardTopicsDropBoxLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -66,6 +67,7 @@ public class QAFlashcardSelectActivity extends BaseActivity {
 
     private void refreshButtons() {
         clearButtons();
+        Collections.sort(loadedTopics);
         System.out.println("pageOffset " + pageOffset);
         System.out.println("loadedtopics " + loadedTopics.size());
         if(loadedTopics.size() > 10) {
